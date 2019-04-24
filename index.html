@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link rel="stylesheet" href="leaflet.css">
+    <script src="leaflet.js"></script>
+
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #map {
+            width: 100vw;
+            height: 200px;
+        }
+    </style>
+
+
+    <div id='map'></div>
+
+    <script>
+        function error(err) {
+            console.warn(`ERROR(${err.code}): ${err.message}`);
+        }
+
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        };
+
+        let map;
+
+        map = L.map('map').setView([52.5235593, 13.486052], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+    </script>
+
+
+    <p id="searchWhere"></p>
+    <p id="latitude"></p>
+    <p id="longitude"></p>
+    <p id="altitude"></p>
+    <p id="accuracy"></p>
+    <p id="check"></p>
+
+    <script>
+        const where = "tofu";
+        const away = 0.0000700;
+
+        let ownLatitude;
+        let ownLongitude;
+        if (where == "tofu") {
+            ownLatitude = 52.5239435;
+            ownLongitude = 13.486052;
+        } else if (where == "smoke") {
+            ownLatitude = 52.5236567;
+            ownLongitude = 13.4862009;
+        } else if (where == "1room") {
+            ownLatitude = 52.5122318;
+            ownLongitude = 13.4546483;
+        } else if (where == "toilet") {
+            ownLatitude = 52.5122073;
+            ownLongitude = 13.4546832;
+        }
+        L.marker([ownLatitude, ownLongitude]).bindPopup("search for").addTo(map);
+        searchWhere.innerHTML = "Search the " + where;
+
+        var latitude = document.getElementById("latitude");
+        var longitude = document.getElementById("longitude");
+        var altitude = document.getElementById("altitude");
+        var accuracy = document.getElementById("accuracy");
+        var check = document.getElementById("check");
+
+
+        function success(pos) {
+            let crd = pos.coords;
+            let testLatitude;
+            let testLongitude;
+
+            /* L.marker([crd.latitude, crd.longitude], {
+                icon: greenIcon
+            }).bindPopup("2").addTo(map); */
+
+
+            if (crd.latitude >= ownLatitude) {
+                testLatitude = crd.latitude - ownLatitude;
+            } else {
+                testLatitude = ownLatitude - crd.latitude;
+            }
+            if (crd.longitude >= ownLongitude) {
+                testLongitude = crd.longitude - ownLongitude;
+            } else {
+                testLongitude = ownLongitude - crd.longitude;
+            }
+
+            if (testLatitude <= away && testLongitude <= away) {
+                /*                 check.innerHTML = "yes" + testLatitude + " - " + testLongitude;
+                 */
+                document.body.style.backgroundColor = "green";
+            } else {
+                /*                 check.innerHTML = "no" + testLatitude + " - " + testLongitude;
+                 */
+                document.body.style.backgroundColor = "white";
+            }
+
+
+            latitude.innerHTML = " Latitude: " + crd.latitude;
+            longitude.innerHTML = " Longitude: " + crd.longitude;
+            altitude.innerHTML = " Altitude: " + crd.altitude;
+
+            if (crd.accuracy >= 20) {
+                accuracy.innerHTML = "BAD Accuracy: " + crd.accuracy;
+                /*                 document.body.style.backgroundColor = "red";
+                 */
+            } else {
+                accuracy.innerHTML = "Accuracy: " + crd.accuracy;
+            }
+
+        }
+
+
+        navigator.geolocation.getCurrentPosition(success, error, options);
+        window.setInterval(function () {
+            navigator.geolocation.getCurrentPosition(success, error, options);
+        }, 3000);
+    </script>
+
+</body>
+</html>
