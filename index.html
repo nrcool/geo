@@ -54,34 +54,53 @@
     <p id="accuracy"></p>
     <p id="check"></p>
 
+    <button onclick="a(tofu)">tofu</button>
+    <button onclick="a(smoke)">smoke</button>
+    <button onclick="a(room)">room</button>
+    <button onclick="a(toilet)">toilet</button>
+
     <script>
-        const where = "tofu";
+       let where1="start";
+        let tofu="tofu"
+        let smoke="smoke"
+        let room="room"
+        let toilet="toilet";
+        function a(loc){
+            where1=loc;
+            console.log(where1);
+            searchWhere.innerHTML = "Search the " + where1;
+           
+        }
+        
         const away = 0.0000700;
 
         let ownLatitude;
         let ownLongitude;
-        if (where == "tofu") {
+        if(where1 == "start") {
             ownLatitude = 52.5239435;
             ownLongitude = 13.486052;
-        } else if (where == "smoke") {
+        }else if (where1 == "tofu") {
+            ownLatitude = 52.5239435;
+            ownLongitude = 13.486052;
+        } else if (where1 == "smoke") {
             ownLatitude = 52.5236567;
             ownLongitude = 13.4862009;
-        } else if (where == "1room") {
+        } else if (where1 == "room") {
             ownLatitude = 52.5122318;
             ownLongitude = 13.4546483;
-        } else if (where == "toilet") {
+        } else if (where1 == "toilet") {
             ownLatitude = 52.5122073;
             ownLongitude = 13.4546832;
         }
-        L.marker([ownLatitude, ownLongitude]).bindPopup("search for").addTo(map);
-        searchWhere.innerHTML = "Search the " + where;
+        
 
         var latitude = document.getElementById("latitude");
         var longitude = document.getElementById("longitude");
         var altitude = document.getElementById("altitude");
         var accuracy = document.getElementById("accuracy");
         var check = document.getElementById("check");
-
+        L.marker([ownLatitude, ownLongitude]).bindPopup("search for").addTo(map);
+        
 
         function success(pos) {
             let crd = pos.coords;
@@ -133,7 +152,7 @@
         navigator.geolocation.getCurrentPosition(success, error, options);
         window.setInterval(function () {
             navigator.geolocation.getCurrentPosition(success, error, options);
-        }, 3000);
+        }, 1000);
     </script>
 
 </body>
